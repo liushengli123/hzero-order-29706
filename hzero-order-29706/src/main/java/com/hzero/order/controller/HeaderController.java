@@ -30,7 +30,7 @@ public class HeaderController {
         header.setOrderDate(new Date());
         // 根据订单编码规则生成订单编号
         Random random = new Random(2);
-        String orderNumber ="SO1907180000"+random;
+        String orderNumber ="S0"+random;
         header.setOrderNumber(orderNumber);
         headerMapper.insert(header);
         return Msg.success();
