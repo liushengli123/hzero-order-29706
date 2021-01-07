@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzero.order.mapper.OrderDetailMapper">
+    <resultMap id="orderDetailMap" type="com.hzero.order.dto.OrderDetailDto">
+        <result column="order_number" property="orderNumber"/>
+        <result column="company_name" property="companyName"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="order_date" property="orderDate"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="so_header_id" property="soHeaderId"/>
+        <result column="so_line_id" property="soLineId"/>
+
+        <result column="line_number" property="lineNumber" jdbcType="DECIMAL"/>
+        <result column="order_quantity" property="orderQuantity" jdbcType="DECIMAL"/>
+        <result column="order_quantity_uom" property="orderQuantityUom" jdbcType="VARCHAR"/>
+        <result column="unit_selling_price" property="unitSellingPrice" jdbcType="DECIMAL"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="addition1" property="addition1" jdbcType="VARCHAR"/>
+        <result column="addition2" property="addition2" jdbcType="VARCHAR"/>
+        <result column="addition3" property="addition3" jdbcType="VARCHAR"/>
+        <result column="addition4" property="addition4" jdbcType="VARCHAR"/>
+        <result column="addition5" property="addition5" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectOrderDetailByOrderNumber" resultMap="orderDetailMap">
+        SELECT
+        hsh.so_header_id,
+        hsl.so_line_id,
+        hsh.order_number,
+        hcom.`company_name`,
+        hcu.`customer_name`,
+        hsh.order_date,
+        hsh.`order_status`,
+        ROUND((hsl.`order_quantity`*hsl.`unit_selling_price`),2) AS line_amount,
+        hsl.line_number,
+        hsl.order_quantity,
+        hsl.order_quantity_uom,
+        hsl.unit_selling_price,
+        hsl.description,
+        hsl.addition1,
+        hsl.addition2,
+        hsl.addition3,
+        hsl.addition4,
+        hsl.addition5,
+        hi.item_code,
+        hi.item_description
+        FROM
+        hodr_company hcom,
+        hodr_so_header hsh,
+        hodr_customer hcu,
+        hodr_so_line hsl,
+        hodr_item hi
+        <where>
+        hsh.`company_id`=hcom.`company_id`
+        AND hsh.`customer_id`= hcu.`customer_id`
+        AND hsl.`so_header_id`=hsh.`so_header_id`
+        AND hsl.item_id=hi.item_id
+            <if test="orderNumber!=null and orderNumber!=''">
+                <bind name="orderNumberLike" value="'%' + orderNumber + '%'" />
+                AND hsh.order_number like #{orderNumberLike}
+            </if>
+        </where>
+    </select>
+
+</mapper>

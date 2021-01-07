@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzero.order.mapper.CustomerMapper">
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap id="BaseResultMap" type="com.hzero.order.entity.Customer">
+        <result column="customer_id" property="customerId" jdbcType="DECIMAL"/>
+        <result column="customer_number" property="customerNumber" jdbcType="VARCHAR"/>
+        <result column="customer_name" property="customerName" jdbcType="VARCHAR"/>
+        <result column="company_id" property="companyId" jdbcType="DECIMAL"/>
+        <result column="enabled_flag" property="enabledFlag" jdbcType="DECIMAL"/>
+<!--        <result column="object_version_number" property="objectVersionNumber" jdbcType="DECIMAL"/>-->
+<!--        <result column="creation_date" property="creationDate" jdbcType="DATE"/>-->
+<!--        <result column="created_by" property="createdBy" jdbcType="DECIMAL"/>-->
+<!--        <result column="last_updated_by" property="lastUpdatedBy" jdbcType="DECIMAL"/>-->
+<!--        <result column="last_update_date" property="lastUpdateDate" jdbcType="DATE"/>-->
+    </resultMap>
+    <select id="findCustomerByNameOrNumber" resultMap="BaseResultMap">
+        select
+        hc.company_id,
+        hc.customer_id,
+        hc.customer_number,
+        hc.customer_name
+        from
+        hodr_customer hc
+        <where>
+            <if test="customer.customerName!=null and customer.customerName!=''">
+                <bind name="customerNameLike" value="'%' + customer.customerName + '%'"/>
+                and hc.customer_name like #{customerNameLike}
+            </if>
+            <if test="customer.customerNumber!=null and customer.customerNumber!=''">
+                <bind name="customerNumberLike" value="'%' + customer.customerNumber + '%'"/>
+                and hc.customer_number like #{customerNumberLike}
+            </if>
+            <if test="companyId!=null">
+                and hc.company_id=#{companyId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCustomerIdByCustomerNumber" resultType="java.lang.Long">
+        select
+            customer_id
+        from
+            hodr_customer
+        where customer_number = #{customerNumber}
+    </select>
+</mapper>

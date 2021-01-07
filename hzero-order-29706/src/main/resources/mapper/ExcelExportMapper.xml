@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzero.order.mapper.ExcelExportMapper">
+    <resultMap id="excelExportMap" type="com.hzero.order.dto.ExcelExportDto">
+        <result column="order_number" property="orderNumber"/>
+        <result column="company_number" property="companyNumber"/>
+        <result column="customer_number" property="customerNumber"/>
+        <result column="order_date" property="orderDate"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="line_number" property="lineNumber"/>
+        <result column="item_code" property="itemCode"/>
+        <result column="order_quantity_uom" property="orderQuantityUom"/>
+        <result column="order_quantity" property="orderQuantity"/>
+        <result column="unit_selling_price" property="unitSellingPrice"/>
+        <result column="description" property="description"/>
+        <result column="addition1" property="addition1"/>
+        <result column="addition2" property="addition2"/>
+        <result column="addition3" property="addition3"/>
+        <result column="addition4" property="addition4"/>
+        <result column="addition5" property="addition5"/>
+    </resultMap>
+    <resultMap id="orderConditionMap" type="com.hzero.order.dto.OrderCondition">
+        <result column="order_number" property="orderNumber"/>
+        <result column="company_id" property="companyId"/>
+        <result column="customer_id" property="customerId"/>
+        <result column="item_id" property="itemId"/>
+        <result column="order_status" property="orderStatus"/>
+    </resultMap>
+    <select id="excelExport" resultMap="excelExportMap">
+        SELECT
+        u.order_number,
+        u.`company_number`,
+        u.`customer_number`,
+        u.order_date,
+        u.`order_status`,
+        u.line_number,
+        u.item_code,
+        u.item_description,
+        u.order_quantity_uom,
+        u.order_quantity,
+        u.unit_selling_price,
+        u.`addition1`,
+        u.`addition2`,
+        u.`addition3`,
+        u.`addition4`,
+        u.`addition5`
+        FROM
+        (
+        SELECT
+        hsh.order_number,
+        hcom.`company_number`,
+        hcu.`customer_number`,
+        hsh.order_date,
+        hsh.`order_status`,
+        hsl.`line_number`,
+        hi.`item_code`,
+        hi.`item_description`,
+        hsl.`order_quantity_uom`,
+        hsl.`order_quantity`,
+        hsl.`unit_selling_price`,
+        hsl.`addition1`,
+        hsl.`addition2`,
+        hsl.`addition3`,
+        hsl.`addition4`,
+        hsl.`addition5`
+        FROM
+        hodr_company hcom,
+        hodr_so_header hsh,
+        hodr_customer hcu,
+        hodr_item hi,
+        hodr_so_line hsl
+        WHERE
+        hsh.`company_id`=hcom.`company_id`
+        AND hsh.`customer_id`= hcu.`customer_id`
+        AND hsl.`so_header_id`=hsh.`so_header_id`
+        AND hsl.item_id=hi.item_id
+        )
+        u
+        LEFT JOIN (
+        SELECT
+        round(SUM(order_quantity*unit_selling_price),2) AS order_amount,
+        order_number
+        FROM
+        hodr_so_line line ,hodr_so_header head
+        WHERE
+        line.`so_header_id`=head.`so_header_id`
+        GROUP BY
+        head.`order_number`
+        ) oa ON oa.order_number = u.order_number
+
+    </select>
+</mapper>

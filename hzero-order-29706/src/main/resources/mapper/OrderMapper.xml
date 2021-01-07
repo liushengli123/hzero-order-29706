@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzero.order.mapper.OrderMapper">
+    <resultMap id="orderMap" type="com.hzero.order.dto.Order">
+        <result column="order_number" property="orderNumber"/>
+        <result column="company_name" property="companyName"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="order_date" property="orderDate"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="order_amount" property="orderAmount"/>
+    </resultMap>
+    <resultMap id="orderConditionMap" type="com.hzero.order.dto.OrderCondition">
+        <result column="order_number" property="orderNumber"/>
+        <result column="company_id" property="companyId"/>
+        <result column="customer_id" property="customerId"/>
+        <result column="item_id" property="itemId"/>
+        <result column="order_status" property="orderStatus"/>
+    </resultMap>
+    <select id="selectOrdersByCondition" resultMap="orderMap">
+        SELECT
+        hsh.order_number,
+        hcom.company_name,
+        hcu.customer_name,
+        hsh.order_date,
+        hsh.order_status,
+        round(sum(hsl.order_quantity*hsl.unit_selling_price),2) AS order_amount
+        FROM
+        hodr_company hcom,
+        hodr_so_header hsh,
+        hodr_customer hcu,
+        hodr_so_line hsl,
+        hodr_item hi
+        <where>
+        hsh.`company_id`=hcom.`company_id`
+            AND hsh.`customer_id`= hcu.`customer_id`
+            AND hsl.`so_header_id`=hsh.`so_header_id`
+            AND hsl.item_id=hi.item_id
+            <if test="companyId!=null">
+                and hcom.company_id =#{companyId}
+            </if>
+            <if test="customerId!=null">
+                and hcu.customer_id =#{customerId}
+            </if>
+            <if test="itemId!=null">
+                and hi.item_id =#{itemId}
+            </if>
+            <if test="orderStatus!=null and orderStatus!=''">
+                and hsh.order_status = #{orderStatus}
+            </if>
+            <if test="orderNumber!=null and orderNumber!=''">
+                <bind name="orderNumberLike" value="'%' + orderNumber + '%'" />
+                and hsh.order_number like #{orderNumberLike}
+            </if>
+        </where>
+        group by hsh.order_number
+    </select>
+</mapper>
