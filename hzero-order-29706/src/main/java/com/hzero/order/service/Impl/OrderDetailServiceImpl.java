@@ -51,9 +51,19 @@ public class OrderDetailServiceImpl implements OderDetailService {
 
     @Override
     public void insertOrderDetail(OrderDetailUpdateDto updateDto) {
-        headerMapper.insert(updateDto.getHeader());
+        if (headerMapper.selectById(updateDto.getHeader().getSoHeaderId()) == null) {
+            headerMapper.insert(updateDto.getHeader());
+        }
+        Long soHerderId =updateDto.getHeader().getSoHeaderId();
         List<Line> lines = updateDto.getLines();
         for (Line line:lines){
+            Long maxLineNumber = lineMapper.getMaxLineNumber(soHerderId);
+            if (maxLineNumber == null) {
+                line.setLineNumber(1L);
+            } else {
+                line.setLineNumber(maxLineNumber + 1L);
+            }
+            line.setSoHeaderId(soHerderId);
             lineMapper.insert(line);
         }
     }
