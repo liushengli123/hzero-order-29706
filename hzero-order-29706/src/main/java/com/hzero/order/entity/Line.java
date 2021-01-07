@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
@@ -20,16 +23,22 @@ public class Line{
     @TableId
     private Long soLineId;
     @ApiModelProperty(value = "订单头ID",required = true)
+    @NotNull
     private Long soHeaderId;
     @ApiModelProperty(value = "行号",required = true)
+    @NotNull
     private Long lineNumber;
     @ApiModelProperty(value = "产品ID",required = true)
+    @NotNull
     private Long itemId;
     @ApiModelProperty(value = "数量",required = true)
+    @NotNull
     private BigDecimal orderQuantity;
     @ApiModelProperty(value = "产品单位",required = true)
+    @NotBlank
     private String orderQuantityUom;
     @ApiModelProperty(value = "销售单价",required = true)
+    @NotNull
     private BigDecimal unitSellingPrice;
     @ApiModelProperty(value = "备注")
     private String description;

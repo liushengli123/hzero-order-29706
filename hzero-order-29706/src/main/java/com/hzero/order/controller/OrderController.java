@@ -2,7 +2,10 @@ package com.hzero.order.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.hzero.order.dto.*;
+import com.hzero.order.entity.Header;
 import com.hzero.order.service.Impl.OrderServiceImpl;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,5 +39,26 @@ public class OrderController {
     public Msg importExcel(MultipartFile multipartFile) throws IOException {
         orderServiceImpl.importExcel(multipartFile);
         return Msg.success();
+    }
+
+    @ApiOperation("提交订单")
+    @PutMapping("/submitOrder")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderStatus", value = "订单状态", required = true, dataType = "String", paramType = "query", allowableValues = "SUBMITED")
+    })
+    public Msg submitOrder(@RequestParam("订单头id") Long headerId, String orderStatus) {
+        Header header = orderServiceImpl.submitOrder(headerId,orderStatus);
+        return Msg.success().add("header",header);
+    }
+
+
+    @ApiOperation("审批订单")
+    @PutMapping("/approveOrder")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderStatus", required = true,value = "订单状态",  dataType = "String", paramType = "query", allowableValues = "APPROVED,REJECTED")
+    })
+    public Msg approveOrder(@RequestParam("订单头id") Long headerId, String orderStatus) {
+        Header header = orderServiceImpl.approveOrder(headerId,orderStatus);
+        return Msg.success().add("header",header);
     }
 }

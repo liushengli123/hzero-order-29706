@@ -7,9 +7,11 @@ import com.hzero.order.dto.*;
 import com.hzero.order.entity.Header;
 import com.hzero.order.entity.Line;
 import com.hzero.order.mapper.*;
+import com.hzero.order.myconfig.CommonException;
 import com.hzero.order.myconfig.ExcelListener;
 import com.hzero.order.service.OrderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,12 @@ import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    private static final String NEW_CONSTANT = "NEW";
+    private static final String REJECTED_CONSTANT = "REJECTED";
+    private static final String SUBMITTED_CONSTANT = "SUBMITED";
+    private static final String APPROVED_CONSTANT = "APPROVED";
+    private static final String CLOSED_CONSTANT = "CLOSED";
 
     @Resource
     OrderMapper orderMapper;
@@ -37,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     ItemMapper itemMapper;
 
+    @Transactional(readOnly = true)
     @Override
     public PageInfo<Order> selectOrdersByCondition(OrderCondition orderCondition, PageRequest pageRequest) {
         PageHelper.startPage(pageRequest.getPage(),pageRequest.getSize());
@@ -57,6 +66,7 @@ public class OrderServiceImpl implements OrderService {
         EasyExcel.write(os, ExcelExportDto.class).sheet("订单数据").doWrite(excelExportDtos);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void importExcel(MultipartFile multipartFile) throws IOException {
         ExcelListener excelListener = new ExcelListener();
@@ -88,6 +98,35 @@ public class OrderServiceImpl implements OrderService {
                     insertLine(importDTO, line);
                 }
             }
+        }
+    }
+
+    @Override
+    public Header submitOrder(Long headerId, String orderStatus) {
+        Header header = headerMapper.selectById(headerId);
+        if (!NEW_CONSTANT.equals(header.getOrderStatus()) && !REJECTED_CONSTANT.equals(header.getOrderStatus())) {
+            throw new CommonException("订单状态不正确，无法提交");
+        }
+        header.setOrderStatus(orderStatus);
+        headerMapper.updateById(header);
+        return header;
+    }
+
+    @Override
+    public Header approveOrder(Long headerId, String orderStatus) {
+        Header orderHeader = headerMapper.selectById(headerId);
+        if (SUBMITTED_CONSTANT.equals(orderHeader.getOrderStatus())) {
+            orderHeader.setOrderStatus(orderStatus);
+            headerMapper.updateById(orderHeader);
+            return orderHeader;
+        } else if (NEW_CONSTANT.equals(orderHeader.getOrderStatus()) || REJECTED_CONSTANT.equals(orderHeader.getOrderStatus())) {
+            throw new CommonException("订单没有提交，无法审批！");
+        } else if (APPROVED_CONSTANT.equals(orderHeader.getOrderStatus())) {
+            throw new CommonException("订单已经审批！");
+        } else if (CLOSED_CONSTANT.equals(orderHeader.getOrderStatus())) {
+            throw new CommonException("订单已经关闭！");
+        } else {
+            throw new CommonException("订单状态错误！");
         }
     }
 

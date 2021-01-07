@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 
@@ -21,18 +24,23 @@ public class Item{
     @TableId
     private Long itemId;
     @ApiModelProperty(value = "物料编码",required = true)
+    @NotBlank
     private String itemCode;
     @ApiModelProperty(value = "物料单位",required = true)
+    @NotBlank
     private String itemUom;
     @ApiModelProperty(value = "物料描述",required = true)
+    @NotBlank
     private String itemDescription;
     @ApiModelProperty(value = "可销售标识",required = true)
+    @NotNull
     private Integer saleableFlag;
     @ApiModelProperty(value = "生效起始时间")
     private Date startActiveDate;
     @ApiModelProperty(value = "生效结束时间")
     private Date endActiveDate;
     @ApiModelProperty(value = "启用标识",required = true)
+    @NotNull
     private Integer enabledFlag;
 //    @Version
 //    private Long objectVersionNumber;

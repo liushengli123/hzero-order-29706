@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
+
 
 @Data
 @AllArgsConstructor
@@ -20,7 +22,9 @@ public class Company{
     @TableId
     private Long companyId;
     @ApiModelProperty(value = "公司编号",required = true)
+    @NotBlank
     private String companyNumber;
+    @NotBlank
     @ApiModelProperty(value = "公司名称",required = true)
     private String companyName;
 //    @ApiModelProperty(value = "启用标识",required = true)

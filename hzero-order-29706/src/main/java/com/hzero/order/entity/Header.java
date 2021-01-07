@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -20,13 +23,18 @@ public class Header{
     @TableId
     private Long soHeaderId;
     @ApiModelProperty(value = "订单编号",required = true)
+    @NotBlank
     private String orderNumber;
     @ApiModelProperty(value = "公司ID",required = true)
+    @NotNull
     private Long companyId;
+    @NotNull
     @TableField(fill = FieldFill.INSERT)
     private Date orderDate;
+    @NotBlank
     @ApiModelProperty(value = "订单状态",hidden  = true)
     private String orderStatus;
+    @NotNull
     @ApiModelProperty(value = "客户id",required = true)
     private Long customerId;
 

@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 
 @Data
 @AllArgsConstructor
@@ -20,12 +23,16 @@ public class Customer {
     @TableId
     private Long customerId;
     @ApiModelProperty(value = "客户编号",required = true)
+    @NotBlank
     private String customerNumber;
     @ApiModelProperty(value = "客户名称",required = true)
+    @NotBlank
     private String customerName;
     @ApiModelProperty(value = "公司ID",required = true)
+    @NotNull
     private Long companyId;
     @ApiModelProperty(value = "启用标识",required = true)
+    @NotNull
     private Integer enabledFlag;
 //    @Version
 //    private Long objectVersionNumber;
