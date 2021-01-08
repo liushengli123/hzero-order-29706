@@ -52,6 +52,7 @@ public class OrderDetailServiceImpl implements OderDetailService {
     @Override
     public void insertOrderDetail(OrderDetailUpdateDto updateDto) {
         if (headerMapper.selectById(updateDto.getHeader().getSoHeaderId()) == null) {
+            updateDto.getHeader().setSoHeaderId(headerMapper.getMaxSoHeaderId()+1L);
             headerMapper.insert(updateDto.getHeader());
         }
         Long soHerderId =updateDto.getHeader().getSoHeaderId();
@@ -63,6 +64,7 @@ public class OrderDetailServiceImpl implements OderDetailService {
             } else {
                 line.setLineNumber(maxLineNumber + 1L);
             }
+            line.setSoLineId(lineMapper.getMaxSoLineId()+1L);
             line.setSoHeaderId(soHerderId);
             lineMapper.insert(line);
         }

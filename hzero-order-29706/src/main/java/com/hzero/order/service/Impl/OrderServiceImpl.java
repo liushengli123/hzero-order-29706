@@ -78,10 +78,10 @@ public class OrderServiceImpl implements OrderService {
         for (ExcelExportDto importDTO:data) {
             if (headerMapper.selectHeadIdByOrderNumber(importDTO.getOrderNumber()) == null) {
                 //订单头导入
-                if (headerMapper.getMaxSoLineId() == null){
+                if (headerMapper.getMaxSoHeaderId() == null){
                     header.setSoHeaderId(1L);
                 }else {
-                    header.setSoHeaderId(headerMapper.getMaxSoLineId()+1L);
+                    header.setSoHeaderId(headerMapper.getMaxSoHeaderId()+1L);
                 }
                 header.setOrderNumber(importDTO.getOrderNumber());
                 // 获取公司id

@@ -38,10 +38,10 @@ public class OderDetailController {
         return Msg.success();
     }
 
-    @ApiOperation(value = "删除销售订单")
-    @DeleteMapping
-    public Msg removeOrderDetail(@RequestParam String orderNumber) {
-        orderDetailServiceImpl.removeOrderDetail(orderNumber);
-        return Msg.success();
-    }
+//    @ApiOperation(value = "删除销售订单")
+//    @DeleteMapping
+//    public Msg removeOrderDetail(@RequestParam String orderNumber) {
+//        orderDetailServiceImpl.removeOrderDetail(orderNumber);
+//        return Msg.success();
+//    }
 }
