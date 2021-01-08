@@ -1,0 +1,10 @@
+代码地址：
+https://github.com/liushengli123/hzero-order-29706.git
+
+运行注册中心模块地址栏输入http://localhost:8000/查看注册的服务
+
+运行订单模块在地址栏输入localhost:8080/swagger-ui.html进行接口测试
+
+接口测试时分页数据为必输字段进行查询操作
+
+
