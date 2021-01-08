@@ -39,4 +39,7 @@
         where
             order_status = #{orderStatus}
     </select>
+    <select id="getMaxSoLineId" resultType="java.lang.Long">
+        select Max(so_header_id) from hodr_so_header
+    </select>
 </mapper>

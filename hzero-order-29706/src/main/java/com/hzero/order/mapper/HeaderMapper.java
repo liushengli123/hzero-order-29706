@@ -16,4 +16,6 @@ public interface HeaderMapper extends BaseMapper<Header> {
 
 
     List<Header> selectHeaderByOrderStatus(@Param("orderStatus") String orderStatus);
+
+    Long getMaxSoLineId();
 }

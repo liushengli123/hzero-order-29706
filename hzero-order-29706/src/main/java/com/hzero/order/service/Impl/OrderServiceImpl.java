@@ -77,7 +77,12 @@ public class OrderServiceImpl implements OrderService {
         Line line = new Line();
         for (ExcelExportDto importDTO:data) {
             if (headerMapper.selectHeadIdByOrderNumber(importDTO.getOrderNumber()) == null) {
-//               订单头导入
+                //订单头导入
+                if (headerMapper.getMaxSoLineId() == null){
+                    header.setSoHeaderId(1L);
+                }else {
+                    header.setSoHeaderId(headerMapper.getMaxSoLineId()+1L);
+                }
                 header.setOrderNumber(importDTO.getOrderNumber());
                 // 获取公司id
                 header.setCompanyId(companyMapper.getById(importDTO.getCompanyNumber()));
@@ -87,17 +92,7 @@ public class OrderServiceImpl implements OrderService {
                 header.setOrderStatus(importDTO.getOrderStatus());
                 headerMapper.insert(header);
             }
-            List<Long> lineNumbers = lineMapper.getLineNumber(headerMapper.selectHeadIdByOrderNumber(importDTO.getOrderNumber()));
-            if (lineNumbers == null || lineNumbers.size()==0) {
-                insertLine(importDTO, line);
-            } else {
-                for (Long lineNumber : lineNumbers) {
-                    if (lineNumber.equals(importDTO.getLineNumber())) {
-                        continue;
-                    }
-                    insertLine(importDTO, line);
-                }
-            }
+            insertLine(importDTO,line);
         }
     }
 
@@ -132,6 +127,11 @@ public class OrderServiceImpl implements OrderService {
 
     private void insertLine(ExcelExportDto importDTO, Line line) {
 //       订单行导入
+        if (lineMapper.getMaxSoLineId() == null){
+            line.setSoLineId(1L);
+        }else {
+            line.setSoLineId(lineMapper.getMaxSoLineId()+1L);
+        }
         line.setSoHeaderId(headerMapper.selectHeadIdByOrderNumber(importDTO.getOrderNumber()));
         line.setLineNumber(importDTO.getLineNumber());
         line.setItemId(itemMapper.selectItemIdByItemCode(importDTO.getItemCode()));

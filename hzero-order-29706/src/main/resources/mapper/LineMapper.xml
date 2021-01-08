@@ -49,4 +49,7 @@
         </where>
         ) t
     </select>
+    <select id="getMaxSoLineId" resultType="java.lang.Long">
+        select Max(so_line_id) from hodr_so_line
+    </select>
 </mapper>

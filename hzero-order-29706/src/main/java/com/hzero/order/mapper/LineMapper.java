@@ -14,4 +14,6 @@ public interface LineMapper extends BaseMapper<Line> {
     List<Long> getLineNumber(@Param("headerId") Long headerId);
 
     void deleteBySoLineId(@Param("soLineId") long soLineId);
+
+    Long getMaxSoLineId();
 }
